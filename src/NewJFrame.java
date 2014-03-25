@@ -389,24 +389,24 @@ class Enlace {
   
     public static List<Enlace> Etiquetados(List<String> etiquetas) {
         ArrayList<Enlace> resultado = new ArrayList<Enlace>();
-        String consulta = "SELECT * FROM enlaces WHERE ";
+        String consulta1 = "SELECT * FROM enlaces WHERE ";
         
         if (NewJFrame.usuarioActual != null) {
-            consulta += "idUsuario=" + NewJFrame.usuarioActual.getId();
+            consulta1 += "idUsuario=" + NewJFrame.usuarioActual.getId();
         } else {
-            consulta += "privado=0";
+            consulta1 += "privado=0";
         }
         
         if (etiquetas!=null && !etiquetas.isEmpty()) {
             for (String etiqueta : etiquetas){
-                consulta += " AND id IN (SELECT idEnlace FROM etiquetas WHERE etiqueta='" + etiqueta + "')";
+                consulta1 += " AND id IN (SELECT idEnlace FROM etiquetas WHERE etiqueta='" + etiqueta + "')";
             }
         }
 
         Statement st = null;
         try {
             st = NewJFrame.con.createStatement();
-            ResultSet rs = st.executeQuery(consulta);
+            ResultSet rs = st.executeQuery(consulta1);
             while (rs.next()) {
                 Enlace e = new Enlace(rs.getInt("id"), rs.getString("url"), rs.getString("titulo"), rs.getString("comentario"), rs.getBoolean("privado"), rs.getInt("idUsuario"));
                 resultado.add(e);
@@ -424,7 +424,6 @@ class Enlace {
             System.out.println(e.getLocalizedMessage());
         }
 
-        System.out.println(consulta);
         return resultado;
     }
 }
