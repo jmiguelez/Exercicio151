@@ -76,10 +76,6 @@ public class NewJFrame extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jTextField1.setText("jTextField1");
-
-        jTextField2.setText("jTextField2");
-
         jTextField3.setText("Introduzca o nome das etiquetas separadas por comas");
 
         jButton2.setText("LOGIN");
@@ -88,8 +84,6 @@ public class NewJFrame extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-
-        jLabel1.setText("jLabel1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -131,7 +125,7 @@ public class NewJFrame extends javax.swing.JFrame {
                         .addComponent(jButton2)
                         .addGap(52, 52, 52)
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 295, Short.MAX_VALUE)
                         .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
@@ -158,7 +152,7 @@ private void verEnlaces(List<Enlace> enlaces){
             }
         }
         else {
-            jTextArea1.setText("Non se atoparon enlaces");
+            jTextArea1.setText("Non se atoparon os enlaces");
         }
     }
 
@@ -166,7 +160,10 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 // TODO add your handling code here:
     ArrayList<String> etiquetas = new ArrayList<String>();
         List<Enlace> enlaces;
-    
+        for (String etiqueta : jTextField3.getText().trim().replaceAll("\\s+", "").split(",")) {
+            etiquetas.add(etiqueta);
+        }
+        verEnlaces(Enlace.Etiquetados(etiquetas));
 }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -202,20 +199,11 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             @Override
             public void run() {
                 new NewJFrame().setVisible(true);
-            }
-            
+            }           
         });
-        
-        
-            
-        
+     
     }
-    
-    
-        
-        
-    
-    
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -317,15 +305,15 @@ class Enlace {
     String titulo;
     String comentario;
     boolean privado;
-    int id_usuario;
+    int idUsuario;
     ArrayList<String> etiquetas;
-    public Enlace(int id, String url, String titulo, String comentario, boolean privado, int id_usuario) {
+    public Enlace(int id, String url, String titulo, String comentario, boolean privado, int idUsuario) {
         this.id = id;
         this.url = url;
         this.titulo = titulo;
         this.comentario = comentario;
         this.privado = privado;
-        this.id_usuario = id_usuario;
+        this.idUsuario = idUsuario;
         this.etiquetas = new ArrayList<String>();
     }
     
@@ -369,12 +357,12 @@ class Enlace {
         this.privado = privado;
     }
 
-    public int getId_usuario() {
-        return id_usuario;
+    public int getidUsuario() {
+        return idUsuario;
     }
 
-    public void setId_usuario(int id_usuario) {
-        this.id_usuario = id_usuario;
+    public void setIidUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public ArrayList<String> getEtiquetas() {
@@ -402,14 +390,14 @@ class Enlace {
         String consulta = "SELECT * FROM enlaces WHERE ";
         
         if (NewJFrame.usuarioActual != null) {
-            consulta += "id_usuario=" + NewJFrame.usuarioActual.getId();
+            consulta += "idUsuario=" + NewJFrame.usuarioActual.getId();
         } else {
             consulta += "privado=0";
         }
         
         if (etiquetas!=null && !etiquetas.isEmpty()) {
             for (String etiqueta : etiquetas){
-                consulta += " AND id IN (SELECT id_enlace FROM etiquetas WHERE etiqueta='" + etiqueta + "')";
+                consulta += " AND id IN (SELECT idEnlace FROM etiquetas WHERE etiqueta='" + etiqueta + "')";
             }
         }
 
@@ -418,10 +406,10 @@ class Enlace {
             st = NewJFrame.con.createStatement();
             ResultSet rs = st.executeQuery(consulta);
             while (rs.next()) {
-                Enlace e = new Enlace(rs.getInt("id"), rs.getString("url"), rs.getString("titulo"), rs.getString("comentario"), rs.getBoolean("privado"), rs.getInt("id_usuario"));
+                Enlace e = new Enlace(rs.getInt("id"), rs.getString("url"), rs.getString("titulo"), rs.getString("comentario"), rs.getBoolean("privado"), rs.getInt("idUsuario"));
                 resultado.add(e);
                 Statement st2 = NewJFrame.con.createStatement();
-                ResultSet rs2 = st2.executeQuery("SELECT etiqueta FROM etiquetas WHERE id_enlace=" + e.getId());
+                ResultSet rs2 = st2.executeQuery("SELECT etiqueta FROM etiquetas WHERE idEnlace=" + e.getId());
                 ArrayList<String> palabras = new ArrayList<String>();
                 while (rs2.next()) {
                     palabras.add(rs2.getString("etiqueta"));
