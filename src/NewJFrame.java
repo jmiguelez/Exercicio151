@@ -137,10 +137,12 @@ public class NewJFrame extends javax.swing.JFrame {
 
 private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 // TODO add your handling code here:
-    if((usuarioActual=Usuario.Existe(jTextField1.getText(), jTextField2.getText()))!=null) {
-            jLabel1.setText(usuarioActual.getLogin()+" ("+ usuarioActual.getId()+")");
-            verEnlaces(Enlace.Etiquetados(null));
+    ArrayList<String> etiquetas = new ArrayList<String>();
+        List<Enlace> enlaces;
+        for (String etiqueta : jTextField3.getText().trim().replaceAll("\\s+", "").split(",")) {
+            etiquetas.add(etiqueta);
         }
+        verEnlaces(Enlace.Etiquetados(etiquetas));
 }//GEN-LAST:event_jButton1ActionPerformed
 
 private void verEnlaces(List<Enlace> enlaces){
@@ -152,18 +154,17 @@ private void verEnlaces(List<Enlace> enlaces){
             }
         }
         else {
-            jTextArea1.setText("Non se atoparon os enlaces");
+            jTextArea1.setText("Non se atoparon enlaces coas etiquetas sinaladas");
         }
     }
 
 private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 // TODO add your handling code here:
-    ArrayList<String> etiquetas = new ArrayList<String>();
-        List<Enlace> enlaces;
-        for (String etiqueta : jTextField3.getText().trim().replaceAll("\\s+", "").split(",")) {
-            etiquetas.add(etiqueta);
+    
+        if((usuarioActual=Usuario.Existe(jTextField1.getText(), jTextField2.getText()))!=null) {
+            jLabel1.setText(usuarioActual.getLogin()+" ("+ usuarioActual.getId()+")");
+            verEnlaces(Enlace.Etiquetados(null));
         }
-        verEnlaces(Enlace.Etiquetados(etiquetas));
 }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
