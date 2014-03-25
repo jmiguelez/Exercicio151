@@ -377,13 +377,13 @@ class Enlace {
     
     @Override
     public String toString(){
-        String devolto = "";
-        devolto += this.titulo + " ("+ this.url + ")\n";
+        String res = "";
+        res += this.titulo + " ("+ this.url + ")\n";
         for (String etiqueta : etiquetas) {
-            devolto += etiqueta + " ";
+            res += etiqueta + " ";
         }
-        devolto += "\n\n";
-        return devolto;
+        res += "\n\n";
+        return res;
     }
     
   
