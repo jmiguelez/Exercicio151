@@ -32,6 +32,8 @@ public class NewJFrame extends javax.swing.JFrame {
         initComponents();
         setConnection();
         verEnlaces(Enlace.Etiquetados(null));
+        jTextArea1.setFont(verdana);
+        jTextArea1.setText("");
         
     }
     
