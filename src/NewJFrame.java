@@ -38,7 +38,7 @@ public class NewJFrame extends javax.swing.JFrame {
     
     public void setConnection(){
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/delicious","root","root");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/Exercicio_delicious","root","root");
         } catch(SQLException e){
             System.out.println(e.getLocalizedMessage());
         }
@@ -163,7 +163,7 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 // TODO add your handling code here:
     
         if((usuarioActual=Usuario.Existe(jTextField1.getText(), jTextField2.getText()))!=null) {
-            jLabel1.setText(usuarioActual.getLogin()+" ("+ usuarioActual.getId()+")");
+            jLabel1.setText(usuarioActual.getLogin());
             verEnlaces(Enlace.Etiquetados(null));
         }
 }//GEN-LAST:event_jButton2ActionPerformed
