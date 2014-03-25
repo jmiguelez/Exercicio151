@@ -4,6 +4,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * To change this template, choose Tools | Templates
@@ -21,13 +24,23 @@ import java.sql.SQLException;
  */
 public class NewJFrame extends javax.swing.JFrame {
     
-    //static public String login = jTextField1.toString();
+    public static Connection con;
+    public static Usuario usuarioActual = null;
 
     /** Creates new form NewJFrame */
     public NewJFrame() {
         initComponents();
-        Usuario.Existe("pedro", "1234");
+        setConnection();
+        verEnlaces(Enlace.Etiquetados(null));
         
+    }
+    
+    public void setConnection(){
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/delicious","root","root");
+        } catch(SQLException e){
+            System.out.println(e.getLocalizedMessage());
+        }
     }
     
     
@@ -48,6 +61,7 @@ public class NewJFrame extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -75,25 +89,33 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("jLabel1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                        .addComponent(jButton2)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(539, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(31, 31, 31))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(17, 17, 17)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                                        .addComponent(jButton2))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(31, 31, 31))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -107,7 +129,9 @@ public class NewJFrame extends javax.swing.JFrame {
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 347, Short.MAX_VALUE)
+                        .addGap(52, 52, 52)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
                         .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
@@ -119,24 +143,29 @@ public class NewJFrame extends javax.swing.JFrame {
 
 private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 // TODO add your handling code here:
-    List<Enlace> enlaces = new ArrayList<Enlace>();
-    List<String> etiquetas = new ArrayList<String>();
-    
-    for(String et : jTextField3.getText().split(",")) {
-        etiquetas.add(et);
-    }
-    
-    enlaces = Enlace.Etiquetados(etiquetas);
-    
-    jTextArea1.setText("");
-    for (Enlace e : enlaces) {
-        jTextArea1.append(e.toString());
-    }
+    if((usuarioActual=Usuario.Existe(jTextField1.getText(), jTextField2.getText()))!=null) {
+            jLabel1.setText(usuarioActual.getLogin()+" ("+ usuarioActual.getId()+")");
+            verEnlaces(Enlace.Etiquetados(null));
+        }
 }//GEN-LAST:event_jButton1ActionPerformed
+
+private void verEnlaces(List<Enlace> enlaces){
+
+        if (enlaces.size()>0) {
+            jTextArea1.setText("");
+            for (Enlace e : enlaces) {
+                jTextArea1.append(e.toString());
+            }
+        }
+        else {
+            jTextArea1.setText("Non se atoparon enlaces");
+        }
+    }
 
 private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 // TODO add your handling code here:
-    Usuario.gardar(jTextField1.getText(), jTextField2.getText());
+    ArrayList<String> etiquetas = new ArrayList<String>();
+        List<Enlace> enlaces;
     
 }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -190,6 +219,7 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
@@ -198,9 +228,69 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     // End of variables declaration//GEN-END:variables
 }
 class Usuario {
-    int id;
-    String login;
-    String clave;
+    private int id;
+    private String login;
+    private String clave;
+    
+    public Usuario(int id, String login, String clave) {
+        this.id = id;
+        this.login = login;
+        this.clave = clave;
+    }
+    
+    public static Usuario Existe(String login, String clave) {
+        Usuario atopado = null;
+        
+        try {
+            
+            PreparedStatement ps = NewJFrame.con.prepareStatement("SELECT * FROM usuarios WHERE login=? AND clave=?");
+            ps.setString(1, login);
+            ps.setString(2, clave);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                atopado = new Usuario(rs.getInt("id"),login,clave);
+            }
+        } catch(SQLException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        
+        return atopado;
+    }
+    
+    public void gardar() {
+        PreparedStatement ps = null;
+        try {
+            if (this.id != 0) {
+                ps = NewJFrame.con.prepareStatement("UPDATE usuarios SET login=?, clave=? WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(3, this.id);
+            } else {
+                ps = NewJFrame.con.prepareStatement("INSERT INTO usuarios VALUES (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            }
+
+            ps.setString(1, this.login);
+            ps.setString(2, this.clave);
+            int cambiados = ps.executeUpdate();
+            if (cambiados > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int key = rs.getInt(1);
+                    this.setId(key);
+                }
+            }
+            
+
+        } catch(SQLException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     public String getClave() {
         return clave;
@@ -217,74 +307,8 @@ class Usuario {
     public void setId(int id) {
         this.id = id;
     }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
     
-    public static boolean Existe(String login, String clave){
-        boolean existe = false;
-        Connection con;
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/delicious","root","root");
-            System.out.println("conexión realizada con exito");
-            PreparedStatement comprob = con.prepareStatement("SELECT COUNT(id) as total FROM USUARIOS WHERE login = ? and clave = ?");
-            comprob.setString(1, login);
-            comprob.setString(2, clave);
-            ResultSet rs = comprob.executeQuery();
-            rs.next();
-            if(rs.getInt("total")==1){
-                existe = true;
-                System.out.println("existe");
-            }else{
-                existe = false;
-                System.out.println("no existe");
-            }
             
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return existe;
-        
-    } 
-    
-    public static void gardar(String login, String clave) {
-        Connection con;
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/delicious","root","root");
-            System.out.println("conexión gardar realizada con exito");
-            PreparedStatement comprob = con.prepareStatement("SELECT id FROM usuarios WHERE login = ? and clave = ?");
-            comprob.setString(1, login);
-            comprob.setString(2, clave);
-            ResultSet rs = comprob.executeQuery();
-            if (rs.next()) {
-                /*con = DriverManager.getConnection("jdbc:mysql://localhost:3307/delicious","root","root");
-                PreparedStatement enlaces = con.prepareStatement("SELECT * FROM enlaces WHERE id = idUsuario");
-                ResultSet rs2 = comprob.executeQuery();
-                while (rs2.next()) {
-                    
-                }
-                
-                PreparedStatement act = con.prepareStatement("UPDATE usuarios SET login = ? and clave = ?");
-                act.setString(1, login);
-                act.setString(2, clave);*/
-            } else {
-                PreparedStatement crear = con.prepareStatement("INSERT INTO usuarios VALUES null, ?, ?");
-                crear.setString(1, login);
-                crear.setString(2, clave);
-            }
-            
-            
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }        
-            }
 }
 
 class Enlace {
@@ -292,17 +316,19 @@ class Enlace {
     String url;
     String titulo;
     String comentario;
-    int idUsuario;
-    boolean publico;
-
-    public String getComentario() {
-        return comentario;
-    }
-
-    public void setComentario(String comentario) {
+    boolean privado;
+    int id_usuario;
+    ArrayList<String> etiquetas;
+    public Enlace(int id, String url, String titulo, String comentario, boolean privado, int id_usuario) {
+        this.id = id;
+        this.url = url;
+        this.titulo = titulo;
         this.comentario = comentario;
+        this.privado = privado;
+        this.id_usuario = id_usuario;
+        this.etiquetas = new ArrayList<String>();
     }
-
+    
     public int getId() {
         return id;
     }
@@ -311,20 +337,12 @@ class Enlace {
         this.id = id;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getUrl() {
+        return url;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public boolean isPublico() {
-        return publico;
-    }
-
-    public void setPublico(boolean publico) {
-        this.publico = publico;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getTitulo() {
@@ -335,11 +353,88 @@ class Enlace {
         this.titulo = titulo;
     }
 
-    public String getUrl() {
-        return url;
+    public String getComentario() {
+        return comentario;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setComentario(String comenurltario) {
+        this.comentario = comentario;
+    }
+
+    public boolean isPrivado() {
+        return privado;
+    }
+
+    public void setPrivado(boolean privado) {
+        this.privado = privado;
+    }
+
+    public int getId_usuario() {
+        return id_usuario;
+    }
+
+    public void setId_usuario(int id_usuario) {
+        this.id_usuario = id_usuario;
+    }
+
+    public ArrayList<String> getEtiquetas() {
+        return etiquetas;
+    }
+
+    public void setEtiquetas(ArrayList<String> etiquetas) {
+        this.etiquetas = etiquetas;
+    }
+    
+    @Override
+    public String toString(){
+        String devolto = "";
+        devolto += this.titulo + " ("+ this.url + ")\n";
+        for (String etiqueta : etiquetas) {
+            devolto += etiqueta + " ";
+        }
+        devolto += "\n\n";
+        return devolto;
+    }
+    
+  
+    public static List<Enlace> Etiquetados(List<String> etiquetas) {
+        ArrayList<Enlace> resultado = new ArrayList<Enlace>();
+        String consulta = "SELECT * FROM enlaces WHERE ";
+        
+        if (NewJFrame.usuarioActual != null) {
+            consulta += "id_usuario=" + NewJFrame.usuarioActual.getId();
+        } else {
+            consulta += "privado=0";
+        }
+        
+        if (etiquetas!=null && !etiquetas.isEmpty()) {
+            for (String etiqueta : etiquetas){
+                consulta += " AND id IN (SELECT id_enlace FROM etiquetas WHERE etiqueta='" + etiqueta + "')";
+            }
+        }
+
+        Statement st = null;
+        try {
+            st = NewJFrame.con.createStatement();
+            ResultSet rs = st.executeQuery(consulta);
+            while (rs.next()) {
+                Enlace e = new Enlace(rs.getInt("id"), rs.getString("url"), rs.getString("titulo"), rs.getString("comentario"), rs.getBoolean("privado"), rs.getInt("id_usuario"));
+                resultado.add(e);
+                Statement st2 = NewJFrame.con.createStatement();
+                ResultSet rs2 = st2.executeQuery("SELECT etiqueta FROM etiquetas WHERE id_enlace=" + e.getId());
+                ArrayList<String> palabras = new ArrayList<String>();
+                while (rs2.next()) {
+                    palabras.add(rs2.getString("etiqueta"));
+                }
+                e.setEtiquetas(palabras);
+                System.out.println(e.toString());
+            }
+
+        } catch(SQLException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+
+        System.out.println(consulta);
+        return resultado;
     }
 }
