@@ -1,4 +1,3 @@
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -246,33 +245,7 @@ class Usuario {
         
         return atopado;
     }
-    
-    public void gardar() {
-        PreparedStatement ps = null;
-        try {
-            if (this.id != 0) {
-                ps = NewJFrame.con.prepareStatement("UPDATE usuarios SET login=?, clave=? WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(3, this.id);
-            } else {
-                ps = NewJFrame.con.prepareStatement("INSERT INTO usuarios VALUES (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            }
-
-            ps.setString(1, this.login);
-            ps.setString(2, this.clave);
-            int cambiados = ps.executeUpdate();
-            if (cambiados > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    int key = rs.getInt(1);
-                    this.setId(key);
-                }
-            }
-            
-
-        } catch(SQLException e) {
-            System.out.println(e.getLocalizedMessage());
-        }
-    }
+ 
 
     public String getLogin() {
         return login;
